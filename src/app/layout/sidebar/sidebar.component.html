@@ -1,0 +1,20 @@
+
+<p-accordion [multiple]="true">
+    <p-accordionTab header="Visualización">
+        <app-button-filter></app-button-filter>
+        <br>
+        <app-dropdown-filter></app-dropdown-filter>
+    </p-accordionTab>
+    <p-accordionTab header="Facultad" class="no-padding">
+        <app-search-list-filter [items]="faculties"></app-search-list-filter>
+    </p-accordionTab>
+    <p-accordionTab header="Programa Academico" class="no-padding">
+        <app-search-list-filter [items]="programs"></app-search-list-filter>
+    </p-accordionTab>
+    <p-accordionTab header="Años">
+        <app-range-filter></app-range-filter>
+    </p-accordionTab>
+    <p-accordionTab header="Género">
+        <app-checkbox-filter></app-checkbox-filter>
+    </p-accordionTab>
+</p-accordion>

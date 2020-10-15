@@ -1,0 +1,16 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.page-container {
+    display: flex;
+    height: calc(100% - 3.5rem - 2px);
+}
+.visualization-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    max-height: calc(100% - 3.5rem - 2px);
+    overflow-y: auto;
+}

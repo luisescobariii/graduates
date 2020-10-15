@@ -1,0 +1,13 @@
+:host {
+    display: flex;
+    flex: 0 0 400px;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    border-left: 1px solid #dee2e6;
+}
+:host ::ng-deep .no-padding {
+    .p-accordion-content {
+        padding: 0;
+    }
+}
