@@ -1,4 +1,6 @@
-<div *ngFor="let item of items" class="p-field-checkbox">
-    <p-checkbox name="group" value="value" [value]="item"  [(ngModel)]="selectedItems" [inputId]="'in-' + item.id"></p-checkbox>
-    <label [for]="item.id">{{item.text}}</label>
+<div *ngFor="let item of checkboxItems" class="p-field-checkbox">
+    <p-checkbox name="group" value="item" [value]="item"
+    [(ngModel)]="selectedCheckboxItems" [inputId]="'in-' + item.id"
+    (onChange)="onChange()"></p-checkbox>
+    <label [for]="'in-' + item.id">{{item.text}}</label>
 </div>

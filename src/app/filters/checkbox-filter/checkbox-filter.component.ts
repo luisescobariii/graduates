@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-checkbox-filter',
@@ -7,16 +7,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CheckboxFilterComponent implements OnInit {
 
-    items = [
-        { id: 0, text: 'Masculino', value: true },
-        { id: 1, text: 'Femenino', value: true },
-    ];
+    @Input() items: any[] = [];
+    checkboxItems: any[] = [];
 
-    selectedItems = [];
+    selectedCheckboxItems: any[] = [];
+    @Output() selectedItems = new EventEmitter<number[]>();
 
     constructor() { }
 
     ngOnInit(): void {
+        this.checkboxItems = this.items.map(i => ({ id: i.id, text: i.name, value: true }));
+    }
+
+    onChange(): void {
+        if (this.selectedCheckboxItems.length === 0) {
+            this.selectedItems.emit(this.items.map(i => i.id));
+        } else {
+            this.selectedItems.emit(this.selectedCheckboxItems.map(i => i.id));
+        }
     }
 
 }

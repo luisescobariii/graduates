@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { SelectItem } from 'primeng/api';
+import { Tag, TagChild } from 'src/app/models/api';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -7,25 +11,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarComponent implements OnInit {
 
-    faculties = [
-        {label: 'Ingeniería', value: 0},
-        {label: 'Ciencias Básicas', value: 1},
-        {label: 'Educación', value: 2},
-        {label: 'Agricultura', value: 3},
-    ];
+    ready = false;
 
-    programs = [
-        {label: 'Tecnología en diseño y desarrollo web', value: 0},
-        {label: 'Tecnología en electrónica', value: 1},
-        {label: 'Tecnología en gestión informática', value: 2},
-        {label: 'Tecnología en manejo del agua', value: 3},
-        {label: 'Tecnología en producción agricola', value: 4},
-        {label: 'Tecnología en sistemas', value: 5},
-        {label: 'Tecnología en sistemas de información', value: 6},
-    ];
+    constructor(public data: DataService, private router: Router) { }
 
-    constructor() { }
+    ngOnInit(): void {
+        this.data.ready.subscribe(_ => {
+            this.filterFaculties(this.data.faculties.map(f => f.id));
+            this.data.selectedPrograms = this.data.programs.map(p => p.id);
+            this.data.selectedGenders = this.data.genders.map(p => p.id);
 
-    ngOnInit(): void { }
+            this.ready = true;
+        });
+    }
+
+    filterVisualizations(selected): void {
+        this.data.selectedMoment = selected;
+        this.data.filteredVisualizations = this.data.visualizations.filter(v => this.data.selectedMoment === v.parent);
+    }
+
+    filterFaculties(selected): void {
+        this.data.selectedFaculties = selected;
+        this.data.filteredPrograms = this.data.programs.filter(p => this.data.selectedFaculties.includes(p.parent));
+    }
+
+    mapSelectTag(tags: Tag[]): SelectItem[] { return tags.map(tag => ({label: tag.name, value: tag.id})); }
+    mapSelectTagChild(tags: TagChild[]): SelectItem[] { return tags.map(tag => ({label: tag.name, value: tag.id})); }
+
+    loadVisualization(id): void {
+        this.router.navigate(['/visualization', id]);
+    }
 
 }

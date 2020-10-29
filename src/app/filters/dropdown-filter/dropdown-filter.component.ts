@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 
 @Component({
@@ -8,17 +8,20 @@ import { SelectItem } from 'primeng/api';
 })
 export class DropdownFilterComponent implements OnInit {
 
-    items: SelectItem[] = [
-        { label: 'Cantidad de egresados', value: 0 },
-        { label: 'Información laboral', value: 1 },
-        { label: 'Información geográfica', value: 2 },
-    ];
+    @Input() items: SelectItem[] = [];
+    @Output() selectedItem = new EventEmitter<number>();
 
-    selectedItem = null;
+    selected = null;
 
     constructor() { }
 
     ngOnInit(): void {
+        this.selected = this.items[0].value;
+        this.selectedItem.emit(this.items[0].value);
+    }
+
+    onChange(res: SelectItem): void {
+        this.selectedItem.emit(res.value);
     }
 
 }

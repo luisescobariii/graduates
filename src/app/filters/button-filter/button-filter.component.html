@@ -1,1 +1,1 @@
-<p-selectButton [options]="items" [(ngModel)]="selectedItem"></p-selectButton>
+<p-selectButton [options]="items" [(ngModel)]="selected" (onChange)="onChange($event)"></p-selectButton>

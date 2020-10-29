@@ -7,6 +7,8 @@ import {SliderModule} from 'primeng/slider';
 import {CheckboxModule} from 'primeng/checkbox';
 import {DropdownModule} from 'primeng/dropdown';
 import {SelectButtonModule} from 'primeng/selectbutton';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {CardModule} from 'primeng/card';
 
 export const PrimeModules = [
     MenubarModule,
@@ -18,4 +20,6 @@ export const PrimeModules = [
     CheckboxModule,
     DropdownModule,
     SelectButtonModule,
+    ProgressSpinnerModule,
+    CardModule,
 ];
