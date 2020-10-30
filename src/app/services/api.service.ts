@@ -17,6 +17,7 @@ export class ApiService {
         getMoments: this.get('/GetMomentos'),
         getM0: this.get('/GetM0'),
         getM1: this.get('/GetM1'),
+        getM5: this.get('/GetM5'),
         getSites: this.get('/GetSedes'),
         getGenders: this.get('/GetSexo'),
         getLocations: this.get('/GetUbicaciones'),

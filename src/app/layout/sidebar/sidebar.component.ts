@@ -18,8 +18,8 @@ export class SidebarComponent implements OnInit {
     ngOnInit(): void {
         this.data.ready.subscribe(_ => {
             this.filterFaculties(this.data.faculties.map(f => f.id));
-            this.data.selectedPrograms = this.data.programs.map(p => p.id);
-            this.data.selectedGenders = this.data.genders.map(p => p.id);
+            this.data._selectedPrograms = this.data.programs.map(p => p.id);
+            this.data._selectedGenders = this.data.genders.map(p => p.id);
 
             this.ready = true;
         });
@@ -31,8 +31,8 @@ export class SidebarComponent implements OnInit {
     }
 
     filterFaculties(selected): void {
-        this.data.selectedFaculties = selected;
-        this.data.filteredPrograms = this.data.programs.filter(p => this.data.selectedFaculties.includes(p.parent));
+        this.data._selectedFaculties = selected;
+        this.data.filteredPrograms = this.data.programs.filter(p => this.data._selectedFaculties.includes(p.parent));
     }
 
     mapSelectTag(tags: Tag[]): SelectItem[] { return tags.map(tag => ({label: tag.name, value: tag.id})); }
