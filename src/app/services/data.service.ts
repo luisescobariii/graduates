@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { M0M1, Tag, TagChild } from '../models/api';
 import { ApiService } from './api.service';
 
@@ -11,9 +11,8 @@ enum MomentIds { M0 = 1, M1, M5 }
 export class DataService {
 
     ready = new Subject<boolean>();
-    readyFlags = new Array(5).fill(false);
+    readyFlags = new Array(6).fill(false);
 
-    curMoment = 1;
     survey: any[] = [];
     filteredSurvey = new Subject<any[]>();
 
@@ -22,27 +21,28 @@ export class DataService {
     faculties: Tag[] = [];
     programs: TagChild[] = [];
     genders: Tag[] = [];
+    locations: any[] = [];
 
-    filteredVisualizations: TagChild[] = [];
-    filteredPrograms: TagChild[] = [];
+    filteredVisualizations = new Subject<TagChild[]>();
+    filteredPrograms = new Subject<TagChild[]>();
 
     private _selectedMoment = 0;
     get selectedMoment(): number { return this._selectedMoment; }
-    set selectedMoment(id) { this._selectedMoment = id; this.filterSurvey(); }
+    set selectedMoment(id) { this._selectedMoment = id; this.loadSurvey(id); }
 
-    _selectedVisualization: number[] = [];
-    get selectedVisualization(): number[] { return this._selectedVisualization; }
+    private _selectedVisualization = 1;
+    get selectedVisualization(): number { return this._selectedVisualization; }
     set selectedVisualization(id) { this._selectedVisualization = id; this.filterSurvey(); }
 
-    _selectedFaculties: number[] = [];
+    private _selectedFaculties: number[] = [];
     get selectedFaculties(): number[] { return this._selectedFaculties; }
     set selectedFaculties(ids) { this._selectedFaculties = ids; this.filterSurvey(); }
 
-    _selectedPrograms: number[] = [];
-    get selectedPrograms(): number[] { return this.selectedPrograms; }
-    set selectedPrograms(ids) { this.selectedPrograms = ids; this.filterSurvey(); }
+    private _selectedPrograms: number[] = [];
+    get selectedPrograms(): number[] { return this._selectedPrograms; }
+    set selectedPrograms(ids) { this._selectedPrograms = ids; this.filterSurvey(); }
 
-    _selectedGenders: number[] = [];
+    private _selectedGenders: number[] = [];
     get selectedGenders(): number[] { return this._selectedGenders; }
     set selectedGenders(ids) { this._selectedGenders = ids; this.filterSurvey(); }
 
@@ -54,6 +54,7 @@ export class DataService {
         });
         this.api.general.getVisualizations.subscribe(res => {
             this.visualizations = res.map(item => ({name: item.Nombre, id: item.IdVisualizacion, parent: item.IdMomento}));
+            console.log(res);
             this.init(1);
         });
         this.api.general.getFaculties.subscribe(res => {
@@ -67,6 +68,10 @@ export class DataService {
         this.api.general.getGenders.subscribe(res => {
             this.genders = res.map(item => ({name: item.Nombre, id: item.IdSexo}));
             this.init(4);
+        });
+        this.api.general.getLocations.subscribe(res => {
+            this.locations = res;
+            this.init(5);
         });
     }
 
@@ -89,15 +94,14 @@ export class DataService {
             default: throw new Error('Invalid Moment Id: ' + id);
         }
         this.api.general[method].subscribe(res => {
-            this.curMoment = id;
             this.survey = res;
             this.filterSurvey();
         });
     }
 
     filterSurvey(): void {
-        if (this.curMoment === MomentIds.M0 || this.curMoment === MomentIds.M1) {
-            this.filteredSurvey.next(this.survey.filter((record: M0M1) => {
+        if (true /*this.selectedMoment === MomentIds.M0 || this.selectedMoment === MomentIds.M1*/) {
+            this.filteredSurvey.next(this.survey.filter((record: any) => {
                 if (!this._selectedFaculties.includes(record.IdFacultad)) { return false; }
                 if (!this._selectedPrograms.includes(record.IdPrograma)) { return false; }
                 if (!this._selectedGenders.includes(record.IdSexo)) { return false; }

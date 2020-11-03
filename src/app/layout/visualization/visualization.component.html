@@ -1,1 +1,5 @@
-<app-pie-chart *ngIf="ready && pieConfigs.includes(cur)" [config]="configs[cur]"></app-pie-chart>
+<ng-container *ngIf="ready">
+    <app-pie-chart *ngIf="curConfig && pieConfigs.includes(cur)" [config]="curConfig" (sortFunction)="changeSortType($event)"></app-pie-chart>
+    <app-treemap *ngIf="curConfig && treemapConfigs.includes(cur)" [config]="curConfig"></app-treemap>
+    <app-colombia-map *ngIf="curConfig && geoConfigs.includes(cur)" [config]="curConfig"></app-colombia-map>
+</ng-container>

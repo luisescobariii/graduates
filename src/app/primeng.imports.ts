@@ -9,6 +9,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
+import {RadioButtonModule} from 'primeng/radiobutton';
 
 export const PrimeModules = [
     MenubarModule,
@@ -22,4 +23,5 @@ export const PrimeModules = [
     SelectButtonModule,
     ProgressSpinnerModule,
     CardModule,
+    RadioButtonModule,
 ];

@@ -20,6 +20,9 @@ import { PieChartComponent } from './visualizations/pie-chart/pie-chart.componen
 import { VisualizationComponent } from './layout/visualization/visualization.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { TreemapComponent } from './visualizations/treemap/treemap.component';
+import { ColombiaMapComponent } from './visualizations/colombia-map/colombia-map.component';
+import { RadioFilterComponent } from './filters/radio-filter/radio-filter.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +36,9 @@ import { environment } from '../environments/environment';
         ButtonFilterComponent,
         PieChartComponent,
         VisualizationComponent,
+        TreemapComponent,
+        ColombiaMapComponent,
+        RadioFilterComponent,
     ],
     imports: [
         BrowserModule,

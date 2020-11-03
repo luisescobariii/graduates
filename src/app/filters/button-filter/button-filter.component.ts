@@ -8,16 +8,19 @@ import { SelectItem } from 'primeng/api';
 })
 export class ButtonFilterComponent implements OnInit {
 
-    @Input() items: SelectItem[] = [];
+    @Input() items: any[] = [];
+    options: SelectItem[] = [];
+
     @Output() selectedItem = new EventEmitter<number>();
 
-    selected = null;
+    selected: any;
 
     constructor() { }
 
     ngOnInit(): void {
-        this.selected = this.items[0].value;
-        this.selectedItem.emit(this.items[0].value);
+        this.options = this.items.map(i => ({ label: i.name, value: i.id }));
+        this.selected = this.options[0].value;
+        this.onChange(this.options[0]);
     }
 
     onChange(res): void {

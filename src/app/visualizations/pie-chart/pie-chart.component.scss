@@ -1,0 +1,5 @@
+:host ::ng-deep .flipped-icon {
+    .p-button-icon {
+        transform: scaleY(-1) rotate(90deg);
+    }
+}

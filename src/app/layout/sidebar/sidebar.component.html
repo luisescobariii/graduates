@@ -1,22 +1,22 @@
 
 <ng-container *ngIf="ready">
     <p-accordion [multiple]="true">
-        <p-accordionTab header="Visualización">
-            <app-button-filter [items]="mapSelectTag(data.moments)" (selectedItem)="filterVisualizations($event)"></app-button-filter>
+        <p-accordionTab header="Visualización" [selected]="true">
+            <app-button-filter [items]="data.moments" (selectedItem)="filterVisualizations($event)"></app-button-filter>
             <br>
-            <app-dropdown-filter [items]="mapSelectTagChild(data.filteredVisualizations)" (selectedItem)="loadVisualization($event)"></app-dropdown-filter>
+            <app-dropdown-filter [items]="data.filteredVisualizations" (selectedItem)="loadVisualization($event)"></app-dropdown-filter>
         </p-accordionTab>
         <p-accordionTab [header]="'Facultad (' + data.selectedFaculties.length + ')'" class="no-padding">
-            <app-search-list-filter [items]="mapSelectTag(data.faculties)" (selectedItems)="filterFaculties($event)"></app-search-list-filter>
+            <app-search-list-filter [items]="faculties" (selectedItems)="filterPrograms($event)"></app-search-list-filter>
         </p-accordionTab>
         <p-accordionTab [header]="'Programa Academico (' + data.selectedPrograms.length + ')'" class="no-padding">
-            <app-search-list-filter [items]="mapSelectTagChild(data.filteredPrograms)" (selectedItems)="data.selectedPrograms=$event"></app-search-list-filter>
+            <app-search-list-filter [items]="data.filteredPrograms" (selectedItems)="data.selectedPrograms=$event"></app-search-list-filter>
         </p-accordionTab>
-        <p-accordionTab header="Años">
+        <!-- <p-accordionTab header="Años">
             <app-range-filter></app-range-filter>
-        </p-accordionTab>
+        </p-accordionTab> -->
         <p-accordionTab [header]="'Género (' + data.selectedGenders.length + ')'">
-            <app-checkbox-filter [items]="data.genders" (selectedItems)="data.selectedGenders=$event"></app-checkbox-filter>
+            <app-radio-filter [items]="data.genders" (selectedItems)="data.selectedGenders=$event"></app-radio-filter>
         </p-accordionTab>
     </p-accordion>
 </ng-container>

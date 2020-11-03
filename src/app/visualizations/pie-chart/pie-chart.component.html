@@ -1,3 +1,20 @@
 <p-card>
-    <div echarts [options]="options"></div>
+    <div echarts [options]="options" [loading]="loading"></div>
+    <div class="p-grid">
+        <div class="p-col">
+            <span class="p-buttonset">
+                <button pButton type="button" (click)="updateChart('pie')" icon="pi pi-clock" title="Pie"></button>
+                <button pButton type="button" (click)="updateChart('column')" icon="pi pi-chart-bar" title="Column"></button>
+                <button pButton type="button" (click)="updateChart('bar')" icon="pi pi-chart-bar" class="flipped-icon" title="Bar"></button>
+            </span>
+        </div>
+        <div class="p-col p-col-fixed">
+            <div class="p-field p-grid p-m-0">
+                <label for="inSort" class="p-col">Orden:</label>
+                <div class="p-col">
+                    <p-dropdown inputId="inSort" [options]="sortOptions" [(ngModel)]="selectedSortOption" (onChange)="sort()"></p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
 </p-card>

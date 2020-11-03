@@ -1,0 +1,4 @@
+<div *ngFor="let item of options" class="p-field-checkbox">
+    <p-radioButton [inputId]="'in-' + item.value" name="category" [value]="item" [(ngModel)]="selectedValue" (onClick)="onChange()"></p-radioButton>
+    <label [for]="'in-' + item.value">{{item.label}}</label>
+</div>

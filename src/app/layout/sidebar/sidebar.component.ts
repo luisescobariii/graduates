@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SelectItem } from 'primeng/api';
-import { Tag, TagChild } from 'src/app/models/api';
+import { Subject } from 'rxjs';
+import { timeout } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -12,31 +12,39 @@ import { DataService } from 'src/app/services/data.service';
 export class SidebarComponent implements OnInit {
 
     ready = false;
+    faculties = new Subject<any[]>();
 
     constructor(public data: DataService, private router: Router) { }
 
     ngOnInit(): void {
         this.data.ready.subscribe(_ => {
-            this.filterFaculties(this.data.faculties.map(f => f.id));
-            this.data._selectedPrograms = this.data.programs.map(p => p.id);
-            this.data._selectedGenders = this.data.genders.map(p => p.id);
+            this.data.selectedMoment = this.data.moments[0].id;
+            this.data.selectedFaculties = this.data.faculties.map(f => f.id);
+            this.data.selectedGenders = this.data.genders.map(p => p.id);
 
             this.ready = true;
+            setTimeout(() => {
+                this.faculties.next(this.data.faculties);
+                this.filterVisualizations(this.data.selectedMoment);
+                this.filterPrograms(this.data.selectedFaculties);
+            }, 1000);
+        });
+        this.data.filteredPrograms.subscribe(res => {
+            this.data.selectedPrograms = res.map(p => p.id);
         });
     }
 
     filterVisualizations(selected): void {
+        console.log(1);
         this.data.selectedMoment = selected;
-        this.data.filteredVisualizations = this.data.visualizations.filter(v => this.data.selectedMoment === v.parent);
+        this.data.filteredVisualizations.next(this.data.visualizations.filter(v => this.data.selectedMoment === v.parent));
     }
 
-    filterFaculties(selected): void {
-        this.data._selectedFaculties = selected;
-        this.data.filteredPrograms = this.data.programs.filter(p => this.data._selectedFaculties.includes(p.parent));
+    filterPrograms(selected): void {
+        console.log(selected);
+        this.data.selectedFaculties = selected;
+        this.data.filteredPrograms.next(this.data.programs.filter(p => this.data.selectedFaculties.includes(p.parent)));
     }
-
-    mapSelectTag(tags: Tag[]): SelectItem[] { return tags.map(tag => ({label: tag.name, value: tag.id})); }
-    mapSelectTagChild(tags: TagChild[]): SelectItem[] { return tags.map(tag => ({label: tag.name, value: tag.id})); }
 
     loadVisualization(id): void {
         this.router.navigate(['/visualization', id]);

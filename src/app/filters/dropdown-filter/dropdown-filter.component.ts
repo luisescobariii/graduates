@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SelectItem } from 'primeng/api';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-dropdown-filter',
@@ -8,19 +9,24 @@ import { SelectItem } from 'primeng/api';
 })
 export class DropdownFilterComponent implements OnInit {
 
-    @Input() items: SelectItem[] = [];
-    @Output() selectedItem = new EventEmitter<number>();
+    @Input() items = new Observable<any[]>();
+    options: SelectItem[] = [];
 
-    selected = null;
+    @Output() selectedItem = new EventEmitter<number>();
 
     constructor() { }
 
     ngOnInit(): void {
-        this.selected = this.items[0].value;
-        this.selectedItem.emit(this.items[0].value);
+        console.log(0);
+        this.items.subscribe(res => {
+            console.log(2);
+            console.log(res);
+            this.options = res.map(i => ({ label: i.name, value: i.id }));
+            this.onChange(this.options[0]);
+        });
     }
 
-    onChange(res: SelectItem): void {
+    onChange(res): void {
         this.selectedItem.emit(res.value);
     }
 

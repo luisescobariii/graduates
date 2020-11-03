@@ -1,5 +1,5 @@
-<p-listbox
-[options]="items"
+<p-listbox *ngIf="options.length > 0"
+[options]="options"
 [multiple]="true"
 [checkbox]="true"
 [showToggleAll]="true"
