@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+
+.p-blockui,
+.p-blockui-document {
+    background: rgba(255, 255, 255, 0.4)!important;
+}
+
+table.dataview-table {
+    border-collapse: collapse;
+    border: thin solid lightgray;
+    user-select: text;
+    margin-top: 1rem;
+
+    th,
+    td {
+        border: solid thin lightgray;
+        padding: 0.4rem 0.8rem;
+        text-align: left;
+
+    }
+
+    th:last-child,
+    td:last-child {
+        text-align: right;
+    }
+}

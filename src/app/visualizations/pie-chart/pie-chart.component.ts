@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {  Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shared } from '../shared-options';
 
@@ -13,6 +13,8 @@ export class PieChartComponent implements OnInit {
     localConfig: any = {};
 
     @Output() sortFunction = new EventEmitter<number>();
+    @Output() separateFunction = new EventEmitter<number>();
+
     selectedSortOption = 0;
     sortOptions = [
         { value: 0, label: 'Alfabético' },
@@ -20,7 +22,14 @@ export class PieChartComponent implements OnInit {
         { value: 2, label: 'Descendente' },
     ];
 
-    loading = true;
+    selectedSeparateOption = 0;
+    separateOptions = [
+        { value: 0, label: 'Ninguno' },
+        { value: 1, label: 'Facultad' },
+        { value: 2, label: 'Programa' },
+        { value: 3, label: 'Género' },
+    ];
+
     options: any = {};
 
     constructor() {}
@@ -32,8 +41,8 @@ export class PieChartComponent implements OnInit {
         });
     }
 
+
     updateChart(type: string = ''): void {
-        this.loading = true;
         if (type !== '') { this.localConfig.type = type; }
         switch (this.localConfig.type) {
             case 'pie': this.showPie(); break;
@@ -47,6 +56,7 @@ export class PieChartComponent implements OnInit {
             toolbox: shared.toolbox,
             title: {
                 text: this.localConfig.title,
+                subtext: 'Total: ' + this.localConfig.totalRecords,
                 left: shared.titlePosition
             },
             grid: shared.grid,
@@ -73,7 +83,6 @@ export class PieChartComponent implements OnInit {
                 }
             ]
         };
-        this.loading = false;
     }
 
     async showColumn(): Promise<void> {
@@ -81,6 +90,7 @@ export class PieChartComponent implements OnInit {
             toolbox: shared.toolbox,
             title: {
                 text: this.localConfig.title,
+                subtext: 'Total: ' + this.localConfig.totalRecords,
                 left: shared.titlePosition
             },
             grid: shared.grid,
@@ -97,12 +107,16 @@ export class PieChartComponent implements OnInit {
             },
             series: [
                 {
+                    name: this.localConfig.title,
                     type: 'bar',
-                    data: this.localConfig.data.map(r => r.value)
+                    data: this.localConfig.data.map(r => r.value),
+                    label: {
+                        show: true,
+                        position: 'top',
+                    },
                 }
             ]
         };
-        this.loading = false;
     }
 
     async showBar(): Promise<void> {
@@ -111,6 +125,7 @@ export class PieChartComponent implements OnInit {
             toolbox: shared.toolbox,
             title: {
                 text: this.localConfig.title,
+                subtext: 'Total: ' + this.localConfig.totalRecords,
                 left: shared.titlePosition
             },
             grid: shared.grid,
@@ -127,17 +142,20 @@ export class PieChartComponent implements OnInit {
             },
             series: [
                 {
-                    title: this.localConfig.title,
+                    name: this.localConfig.title,
                     type: 'bar',
-                    data: tempData.map(r => r.value)
+                    data: tempData.map(r => r.value),
+                    label: {
+                        show: true,
+                        position: 'right',
+                    },
                 }
             ]
         };
-        this.loading = false;
     }
 
-    sort(): void {
-        this.sortFunction.emit(this.selectedSortOption);
-    }
+    sort(): void { this.sortFunction.emit(this.selectedSortOption); }
+
+    separate(): void { this.separateFunction.emit(this.selectedSeparateOption); }
 
 }

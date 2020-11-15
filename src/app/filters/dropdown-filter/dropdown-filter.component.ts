@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Observable } from 'rxjs';
 
@@ -7,27 +7,31 @@ import { Observable } from 'rxjs';
     templateUrl: './dropdown-filter.component.html',
     styleUrls: ['./dropdown-filter.component.scss']
 })
-export class DropdownFilterComponent implements OnInit {
+export class DropdownFilterComponent implements OnInit, OnChanges {
 
-    @Input() items = new Observable<any[]>();
+    @Input() items: any = [];
+    @Input() selected = -1;
     options: SelectItem[] = [];
+    selectedOption = -1;
 
     @Output() selectedItem = new EventEmitter<number>();
 
     constructor() { }
 
     ngOnInit(): void {
-        console.log(0);
-        this.items.subscribe(res => {
-            console.log(2);
-            console.log(res);
-            this.options = res.map(i => ({ label: i.name, value: i.id }));
-            this.onChange(this.options[0]);
-        });
     }
 
-    onChange(res): void {
-        this.selectedItem.emit(res.value);
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.items) {
+            this.options = this.items.map(i => ({ label: i.name, value: i.id }));
+        }
+        if (changes.selected) {
+            this.selectedOption = this.selected;
+        }
+    }
+
+    onChange(): void {
+        this.selectedItem.emit(this.selected);
     }
 
 }

@@ -1,7 +1,8 @@
 <p-listbox *ngIf="options.length > 0"
+[(ngModel)]="selectedOptions"
 [options]="options"
 [multiple]="true"
 [checkbox]="true"
 [showToggleAll]="true"
 [filter]="true"
-(onChange)="onChange($event)"></p-listbox>
+(onChange)="onChange()"></p-listbox>

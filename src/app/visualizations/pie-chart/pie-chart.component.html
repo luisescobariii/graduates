@@ -1,5 +1,5 @@
 <p-card>
-    <div echarts [options]="options" [loading]="loading"></div>
+    <div echarts [options]="options"></div>
     <div class="p-grid">
         <div class="p-col">
             <span class="p-buttonset">
@@ -15,6 +15,12 @@
                     <p-dropdown inputId="inSort" [options]="sortOptions" [(ngModel)]="selectedSortOption" (onChange)="sort()"></p-dropdown>
                 </div>
             </div>
+            <!-- <div class="p-field p-grid p-m-0">
+                <label for="inSeparate" class="p-col">Separar:</label>
+                <div class="p-col">
+                    <p-dropdown inputId="inSeparate" [options]="separateOptions" [(ngModel)]="selectedSortOption" (onChange)="separate()"></p-dropdown>
+                </div>
+            </div> -->
         </div>
     </div>
 </p-card>

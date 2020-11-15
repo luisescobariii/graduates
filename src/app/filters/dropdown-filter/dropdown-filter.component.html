@@ -1,1 +1,1 @@
-<p-dropdown *ngIf="options.length > 0" [options]="options" (onChange)="onChange($event)"></p-dropdown>
+<p-dropdown *ngIf="options.length > 0" [(ngModel)]="selected" [options]="options" (onChange)="onChange()"></p-dropdown>

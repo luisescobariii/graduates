@@ -1,5 +1,5 @@
 <p-card>
-    <div echarts [options]="options" [loading]="loading"></div>
+    <div echarts *ngIf="!loading" [options]="options" (chartInit)="loadChartInstance($event)"></div>
     <div class="p-grid">
         <div class="p-col">
             <span class="p-buttonset">

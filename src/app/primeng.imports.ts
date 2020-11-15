@@ -10,6 +10,9 @@ import {SelectButtonModule} from 'primeng/selectbutton';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {RadioButtonModule} from 'primeng/radiobutton';
+import {BlockUIModule} from 'primeng/blockui';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
 export const PrimeModules = [
     MenubarModule,
@@ -24,4 +27,7 @@ export const PrimeModules = [
     ProgressSpinnerModule,
     CardModule,
     RadioButtonModule,
+    BlockUIModule,
+    MessagesModule,
+    MessageModule
 ];

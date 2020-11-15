@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shared } from '../shared-options';
 
@@ -13,19 +13,17 @@ export class ColombiaMapComponent implements OnInit {
     localConfig: any = {};
 
     @Output() sortFunction = new EventEmitter<number>();
-    selectedSortOption = 0;
-    sortOptions = [
-        { value: 0, label: 'Alfabético' },
-        { value: 1, label: 'Ascendente' },
-        { value: 2, label: 'Descendente' },
-    ];
 
-    loading = true;
+    loading = false;
     options: any = {};
+
+    zoom = 1;
+    center = null;
 
     constructor() {}
 
     ngOnInit(): void {
+        setTimeout(_ => { this.loading = true; });
         this.config.subscribe(res => {
             this.loading = true;
             this.localConfig = res;
@@ -34,21 +32,23 @@ export class ColombiaMapComponent implements OnInit {
     }
 
     async showDepts(): Promise<void> {
+        if (!this.localConfig || !this.localConfig.data || this.localConfig.data.length === 0) { return; }
         const data: any[] = [];
-        console.log(this.localConfig.data, this.localConfig.locations);
         for (const record of this.localConfig.data) {
-            const location = this.localConfig.locations.find(l => l.IdUbicacion.toString() === record.name);
-            if (location) {
-                const pos = data.find(l => l.name === location.Estado);
-                if (pos) {
-                    pos.value += record.value;
-                } else {
-                    data.push({ name: location.Estado, value: record.value});
+            if (this.localConfig.locations) {
+                const location = this.localConfig.locations.find(l => l.IdUbicacion.toString() === record.name);
+                if (location) {
+                    const pos = data.find(l => l.name === location.Estado);
+                    if (pos) {
+                        pos.value += record.value;
+                    } else {
+                        data.push({ name: location.Estado, value: record.value});
+                    }
                 }
             }
         }
         const maxValue = Math.max(...data.map(r => r.value));
-        console.log(data);
+
         this.options = {
             toolbox: shared.toolbox,
             title: {
@@ -56,28 +56,35 @@ export class ColombiaMapComponent implements OnInit {
                 left: shared.titlePosition
             },
             roam: true,
-            grid: shared.grid,
+            scaleLimit: {min: 1, max: 10},
             tooltip: {
                 trigger: 'item',
-                formatter: '{b}: {c}',
+                formatter: (res) => {
+                    if (res.data) { return `${res.data.name}: ${res.data.value}`; }
+                    return null;
+                },
             },
             legend: {
-                orient: 'vertical',
-                left: 10,
+                show: false,
             },
             visualMap: {
                 min: 0,
                 max: maxValue,
                 calculable: true,
+                realtime: false,
             },
             series: [
                 {
+                    label: {
+                        show: false,
+                    },
                     name: this.localConfig.title,
                     nameProperty: 'dpt',
                     type: 'map',
                     mapType: 'COL_D',
-                    avoidLabelOverlap: true,
                     data,
+                    zoom: this.zoom,
+                    center: this.center,
                 }
             ]
         };
@@ -86,15 +93,15 @@ export class ColombiaMapComponent implements OnInit {
 
     async showMpios(): Promise<void> {
         const data: any[] = [];
-        console.log(this.localConfig.data, this.localConfig.locations);
+
         for (const record of this.localConfig.data) {
             const location = this.localConfig.locations.find(l => l.IdUbicacion.toString() === record.name);
             if (location) {
-                data.push({ name: location.Ciudad, value: record.value});
+                data.push({ name: location.Estado + ' - ' + location.Ciudad, value: record.value});
             }
         }
         const maxValue = Math.max(...data.map(r => r.value));
-        console.log(data);
+
         this.options = {
             toolbox: shared.toolbox,
             title: {
@@ -102,31 +109,53 @@ export class ColombiaMapComponent implements OnInit {
                 left: shared.titlePosition
             },
             roam: true,
-            grid: shared.grid,
+            scaleLimit: {min: 1, max: 10},
             tooltip: {
                 trigger: 'item',
-                formatter: '{b}: {c}',
+                formatter:  (res) => {
+                    if (res.data) { return `${res.data.name}: ${res.data.value}`; }
+                    return null;
+                },
             },
             legend: {
-                orient: 'vertical',
-                left: 10,
+                show: false,
             },
             visualMap: {
                 min: 0,
                 max: maxValue,
                 calculable: true,
+                realtime: false,
             },
             series: [
                 {
+                    label: {
+                        show: false,
+                    },
                     name: this.localConfig.title,
+                    nameProperty: 'code',
                     type: 'map',
                     mapType: 'COL_M',
-                    avoidLabelOverlap: true,
                     data,
+                    zoom: this.zoom,
+                    center: this.center,
                 }
             ]
         };
         this.loading = false;
+    }
+
+    loadChartInstance(instance): void {
+        instance.on('geoRoam', e => this.onGeoRoam(e, this));
+    }
+
+    onGeoRoam(e, context): void {
+        if (context.zoom && e.zoom) {
+            context.zoom *= e.zoom;
+            context.center = [e.originX, e.originY];
+        } else {
+            context.center[0] += e.dx;
+            context.center[1] += e.dy;
+        }
     }
 
 }

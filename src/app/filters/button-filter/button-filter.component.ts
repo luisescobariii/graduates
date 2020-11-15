@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 
 @Component({
@@ -6,24 +6,28 @@ import { SelectItem } from 'primeng/api';
     templateUrl: './button-filter.component.html',
     styleUrls: ['./button-filter.component.scss']
 })
-export class ButtonFilterComponent implements OnInit {
+export class ButtonFilterComponent implements OnInit, OnChanges {
 
     @Input() items: any[] = [];
+    @Input() selected = -1;
     options: SelectItem[] = [];
 
     @Output() selectedItem = new EventEmitter<number>();
 
-    selected: any;
+    current: any;
 
     constructor() { }
 
     ngOnInit(): void {
         this.options = this.items.map(i => ({ label: i.name, value: i.id }));
-        this.selected = this.options[0].value;
-        this.onChange(this.options[0]);
+        this.current = this.selected;
     }
 
-    onChange(res): void {
-        this.selectedItem.emit(res.value);
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.selected) { this.current = this.selected; }
+    }
+
+    onChange(): void {
+        this.selectedItem.emit(this.current);
     }
 }

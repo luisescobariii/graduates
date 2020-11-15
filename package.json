@@ -7,7 +7,9 @@
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "e2e": "ng e2e",
+        "build-azure": "ng build --prod --output-path=dist/ --baseHref=\"https://graduatesurveysto.z13.web.core.windows.net/\"",
+        "build-github": "ng build --prod --output-path=docs/ --baseHref=\"https://luisescobariii.github.io/graduates/\""
     },
     "private": true,
     "dependencies": {

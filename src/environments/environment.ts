@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://LAPTOP-PAULA',
+  // apiUrl: 'https://graduate-survey-web-api.azurewebsites.net',
 };
 
 /*

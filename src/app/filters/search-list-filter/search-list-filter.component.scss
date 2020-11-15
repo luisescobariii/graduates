@@ -1,7 +1,17 @@
 :host ::ng-deep .p-listbox{
     border: none;
+    padding: 0;
 
     .p-listbox-list {
         max-height: 15rem;
+        padding: 0;
+
+        .p-listbox-item.p-highlight {
+            color: #495057;
+            background: #ffffff;
+            .p-checkbox-box {
+                border-color: #4CAF50;
+            }
+        }
     }
 }

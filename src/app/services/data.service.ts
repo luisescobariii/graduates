@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { M0M1, Tag, TagChild } from '../models/api';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { Tag, TagChild } from '../models/api';
 import { ApiService } from './api.service';
 
-enum MomentIds { M0 = 1, M1, M5 }
+export enum MomentIds { M0 = 1, M1, M5 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class DataService {
 
-    ready = new Subject<boolean>();
-    readyFlags = new Array(6).fill(false);
+    ready = new BehaviorSubject<boolean>(false);
+    loading = new BehaviorSubject<boolean>(true);
+    readyFlags = new Array(7).fill(false);
 
     survey: any[] = [];
-    filteredSurvey = new Subject<any[]>();
+    filteredSurvey = new BehaviorSubject<any[]>([]);
 
     moments: Tag[] = [];
     visualizations: TagChild[] = [];
@@ -23,20 +25,35 @@ export class DataService {
     genders: Tag[] = [];
     locations: any[] = [];
 
-    filteredVisualizations = new Subject<TagChild[]>();
-    filteredPrograms = new Subject<TagChild[]>();
+    filteredVisualizations = new BehaviorSubject<TagChild[]>([]);
+    filteredPrograms = new BehaviorSubject<TagChild[]>([]);
 
-    private _selectedMoment = 0;
+    private _selectedMoment = -1;
     get selectedMoment(): number { return this._selectedMoment; }
-    set selectedMoment(id) { this._selectedMoment = id; this.loadSurvey(id); }
+    set selectedMoment(id) {
+        this._selectedMoment = id;
+        this.filterVisualizations();
+        this.loadSurvey(id);
+    }
 
-    private _selectedVisualization = 1;
+    private _selectedVisualization = -1;
     get selectedVisualization(): number { return this._selectedVisualization; }
-    set selectedVisualization(id) { this._selectedVisualization = id; this.filterSurvey(); }
+    set selectedVisualization(id) {
+        const vis = this.visualizations.find(v => v.id === id);
+        if (vis) {
+            this._selectedVisualization = id;
+            if (vis.parent !== this.selectedMoment) { this.selectedMoment = vis.parent; }
+            this.filterSurvey();
+        }
+    }
 
     private _selectedFaculties: number[] = [];
     get selectedFaculties(): number[] { return this._selectedFaculties; }
-    set selectedFaculties(ids) { this._selectedFaculties = ids; this.filterSurvey(); }
+    set selectedFaculties(ids) {
+        this._selectedFaculties = ids;
+        this.filterPrograms();
+        this.filterSurvey();
+    }
 
     private _selectedPrograms: number[] = [];
     get selectedPrograms(): number[] { return this._selectedPrograms; }
@@ -46,7 +63,7 @@ export class DataService {
     get selectedGenders(): number[] { return this._selectedGenders; }
     set selectedGenders(ids) { this._selectedGenders = ids; this.filterSurvey(); }
 
-    constructor(private api: ApiService) {
+    constructor(private api: ApiService, private router: Router) {
         this.ready.next(false);
         this.api.general.getMoments.subscribe(res => {
             this.moments = res.map(item => ({name: item.Nombre, id: item.IdMomento}));
@@ -54,7 +71,6 @@ export class DataService {
         });
         this.api.general.getVisualizations.subscribe(res => {
             this.visualizations = res.map(item => ({name: item.Nombre, id: item.IdVisualizacion, parent: item.IdMomento}));
-            console.log(res);
             this.init(1);
         });
         this.api.general.getFaculties.subscribe(res => {
@@ -77,15 +93,17 @@ export class DataService {
 
     init(flagIndex: number): void {
         this.readyFlags[flagIndex] = true;
-        if (this.readyFlags.every(f => f)) {
-            this.ready.next(true);
-        } else {
-            return;
-        }
+        if (!this.readyFlags.every(f => f)) { return; }
 
+        this.selectedFaculties = this.faculties.map(f => f.id);
+        this.selectedPrograms = this.programs.map(p => p.id);
+        this.selectedGenders = this.genders.map(p => p.id);
+
+        this.ready.next(true);
     }
 
     loadSurvey(id: number): void {
+        this.loading.next(true);
         let method = '';
         switch (id) {
             case MomentIds.M0: method = 'getM0'; break;
@@ -96,18 +114,60 @@ export class DataService {
         this.api.general[method].subscribe(res => {
             this.survey = res;
             this.filterSurvey();
+            this.loading.next(false);
         });
     }
 
     filterSurvey(): void {
         if (true /*this.selectedMoment === MomentIds.M0 || this.selectedMoment === MomentIds.M1*/) {
             this.filteredSurvey.next(this.survey.filter((record: any) => {
-                if (!this._selectedFaculties.includes(record.IdFacultad)) { return false; }
-                if (!this._selectedPrograms.includes(record.IdPrograma)) { return false; }
-                if (!this._selectedGenders.includes(record.IdSexo)) { return false; }
+                if (!this.selectedFaculties.includes(record.IdFacultad)) { return false; }
+                if (!this.selectedPrograms.includes(record.IdPrograma)) { return false; }
+                if (!this.selectedGenders.includes(record.IdSexo)) { return false; }
                 return true;
             }));
         }
     }
 
+    private filterVisualizations(): void {
+        const filtered = this.visualizations.filter(v => this.selectedMoment === v.parent);
+        this.filteredVisualizations.next(filtered);
+    }
+
+    private filterPrograms(): void {
+        const filtered = this.programs.filter(p => this.selectedFaculties.includes(p.parent));
+        this.filteredPrograms.next(filtered);
+        this.selectedPrograms = filtered.map(p => p.id);
+    }
+
+    changeMoment(id): void {
+        this.selectedMoment = id;
+        // Set new visualization to the first of selected moment
+        let newSelectedVis = 0;
+        const filtered = this.visualizations.filter(v => id === v.parent);
+        if (filtered?.length > 0) { newSelectedVis = filtered[0].id; }
+
+        // Try to set the same visualization in the new moment
+        const curVis = this.visualizations.find(v => v.id === this.selectedVisualization);
+        if (curVis) {
+            const sameVis = filtered.find(v => v.name === curVis.name);
+            if (sameVis) { newSelectedVis = sameVis.id; }
+        }
+        this.loadVisualization(newSelectedVis);
+    }
+
+    loadVisualization(id): void {
+        this.router.navigate(['/visualization', id]);
+    }
+
 }
+
+/**
+ * Mostrar los filtros de lista con todos los chulos y mostrar un mensaje de error cuando no seleccione nada - Done
+ * Mostrar títulos sobre las tortas - Done
+ * Mostrar total de datos en tortas - Done
+ * Bloquar el paso a otros momentos al seleccionar visualizaciones en m5 - Done
+ * Dar formato a "ver datos" - Done
+ * Mostrar momentos por año - Done
+ * Mostrar ayuda explicando cómo funcionan los momentos
+ */
