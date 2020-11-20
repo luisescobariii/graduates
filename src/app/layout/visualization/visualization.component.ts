@@ -20,11 +20,11 @@ export class VisualizationComponent implements OnInit {
     pieConfigs = [
         1, 2, 3, 4, 5, 6, 7,
         11, 12, 13, 14, 15, 16, 17,
-        21, 22, 23, 24, 25, 26, 27, 29, 30,
+        21, 22, 23, 24, 25, 26, 27,
         31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
     ];
-    treemapConfigs = [9, 10, 19, 20];
+    treemapConfigs = [9, 10, 19, 20, 29, 30];
     geoConfigs = [8, 18, 28];
 
     separateColumns = ['', 'IdFacultad', 'IdPrograma', 'IdSexo'];
@@ -63,11 +63,11 @@ export class VisualizationComponent implements OnInit {
         26: { moment: MomentIds.M5, type: 'pie', column: 'PromedioIngresos' },
         27: { moment: MomentIds.M5, type: 'column', column: 'Estrato' },
         28: { moment: MomentIds.M5, type: 'geo', column: 'IdUbicacionResidencia', locations: this.data.locations  },
-        29: { moment: MomentIds.M5, type: 'pie', column: 'Empresa' },
-        30: { moment: MomentIds.M5, type: 'pie', column: 'Cargo' },
+        29: { moment: MomentIds.M5, type: 'treemap', column: 'Empresa' },
+        30: { moment: MomentIds.M5, type: 'treemap', column: 'Cargo' },
         31: { moment: MomentIds.M5, type: 'pie', column: 'PrimerTrabajo' },
         32: { moment: MomentIds.M5, type: 'pie', column: 'DemoraVinculacionLaboral' },
-        // 33: { moment: MomentIds.M5, type: 'pie', column: '' },
+        33: { moment: MomentIds.M5, type: 'pie', column: 'WorksAtTdea' },
         34: { moment: MomentIds.M5, type: 'pie', column: 'InnovacionHerramientasTecnologiaApoyo' },
         35: { moment: MomentIds.M5, type: 'pie', column: 'CalidadDocentes' },
         36: { moment: MomentIds.M5, type: 'pie', column: 'Infraestructura' },
@@ -86,7 +86,7 @@ export class VisualizationComponent implements OnInit {
         49: { moment: MomentIds.M5, type: 'pie', column: 'CargoExterior' },
         50: { moment: MomentIds.M5, type: 'pie', column: 'PaisTrabajo' },
         51: { moment: MomentIds.M5, type: 'pie', column: 'PaisEstudio' },
-        // 52: { moment: MomentIds.M5, type: 'pie', column: '' },
+        52: { moment: MomentIds.M5, type: 'pie', column: 'NameFaculty', disableSeparate: true },
     };
 
     subscription: any = null;
@@ -131,6 +131,24 @@ export class VisualizationComponent implements OnInit {
 
         if (!this.ready || !config) { return; }
         this.ready = false;
+
+        if (this.cur === 33) {
+            const tdeaVariants = ['TDEA', 'TECNOLOGICO DE ANTIOQUIA'];
+            this.filteredData.forEach(r => {
+                r.WorksAtTdea = tdeaVariants.some(v => r.Empresa.includes(v)) ? 'SI' : 'NO';
+            });
+        }
+
+        if (this.cur === 52) {
+            const facNames = {};
+            for (const f of this.data.faculties) { facNames[f.id] = f.name; }
+            this.filteredData.forEach(r => {
+                r.NameFaculty = facNames[r.IdFacultad];
+            });
+            this.curSeparateType = SeparateType.None;
+        }
+
+
         if (this.curSeparateType === SeparateType.None /*this.pieConfigs.includes(this.cur)*/) {
             const counts = {};
             for (const record of this.filteredData) {
@@ -147,7 +165,7 @@ export class VisualizationComponent implements OnInit {
             let data: any = Object.keys(counts).map(key => ({name: key, value: counts[key]}));
             if (this.treemapConfigs.includes(this.cur)) {
                 for (const record of data) { record.path = ''; }
-                this.curSortType = SortType.Descending;
+                this.curSortType = SortType.Alphabetical;
             }
             if (this.geoConfigs.includes(this.cur)) {
                 this.curSortType = SortType.Alphabetical;

@@ -27,12 +27,12 @@ export class PieChartComponent implements OnInit {
     selectedSeparateOption = 0;
     separateOptions: SelectItem[] = [
         { value: 0, label: 'Ninguno' },
-        { value: 1, label: 'Facultad' },
+        { value: 1, label: 'Facultad', disabled: false },
         { value: 2, label: 'Programa', disabled: false },
         { value: 3, label: 'Género' },
     ];
     stack = true;
-
+    disableSeparate = false;
     separateError = false;
 
     options: any = {};
@@ -42,6 +42,9 @@ export class PieChartComponent implements OnInit {
     ngOnInit(): void {
         this.config.subscribe(res => {
             this.localConfig = res;
+            this.disableSeparate = res.disableSeparate ?? false;
+            if (this.disableSeparate) { this.selectedSeparateOption = 0; }
+
             if (this.data.selectedFaculties.length > 5) {
                 this.separateOptions[1].disabled = true;
                 this.separateOptions[1].title = 'Solo se pueden separar hasta 5 facultades.';
@@ -73,6 +76,8 @@ export class PieChartComponent implements OnInit {
 
 
     updateChart(type: string = ''): void {
+        console.log(this.separateError);
+        console.log(this.localConfig);
         if (type !== '') {
             this.localConfig.type = type;
             if (type === 'pie' && this.selectedSeparateOption !== 0) {

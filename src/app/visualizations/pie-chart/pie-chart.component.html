@@ -17,7 +17,7 @@
                     <p-dropdown inputId="inSort" [options]="sortOptions" [(ngModel)]="selectedSortOption" (onChange)="sort()"></p-dropdown>
                 </div>
             </div>
-            <div *ngIf="localConfig.type !== 'pie'" class="p-field p-grid p-m-0">
+            <div *ngIf="localConfig.type !== 'pie' && !disableSeparate" class="p-field p-grid p-m-0">
                 <label for="inSeparate">
                     Separar:
                     <i class="pi pi-info-circle" style="font-size:0.8em; color:blue" title="Debe seleccionar 5 opciones o menos en el filtro correspondiente para habilitar su selección."></i>
@@ -35,4 +35,4 @@
         </div>
     </p-footer>
 </p-card>
-<p-message *ngIf="separateError" severity="warn" text="No es posible separar más de 5 simultaneamente"></p-message>
+<p-message *ngIf="separateError" severity="warn" text="No es posible separar más de 5 opciones simultaneamente"></p-message>

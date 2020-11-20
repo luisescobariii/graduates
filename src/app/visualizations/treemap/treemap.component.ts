@@ -23,6 +23,8 @@ export class TreemapComponent implements OnInit {
     loading = true;
     options: any = {};
 
+    showNa = true;
+
     constructor() {}
 
     ngOnInit(): void {
@@ -34,6 +36,12 @@ export class TreemapComponent implements OnInit {
     }
 
     async showTreemap(): Promise<void> {
+        let tempData;
+        if (this.showNa) {
+            tempData = this.localConfig.data;
+        } else {
+            tempData = this.localConfig.data.filter(r => r.name !== 'N/A');
+        }
         this.options = {
             toolbox: shared.toolbox,
             title: {
@@ -43,7 +51,6 @@ export class TreemapComponent implements OnInit {
             grid: shared.grid,
             tooltip: {
                 trigger: 'item',
-                formatter: '{b}: {c} ({d}%)',
             },
             legend: {
                 orient: 'vertical',
@@ -54,7 +61,7 @@ export class TreemapComponent implements OnInit {
                     name: this.localConfig.title,
                     type: 'treemap',
                     avoidLabelOverlap: true,
-                    data: this.localConfig.data,
+                    data: tempData,
                     visibleMin: 300,
                     levels: [
                         {
@@ -84,6 +91,11 @@ export class TreemapComponent implements OnInit {
 
     sort(): void {
         this.sortFunction.emit(this.selectedSortOption);
+    }
+
+    toggleNa(): void {
+        this.showNa = !this.showNa;
+        this.showTreemap();
     }
 
 }
