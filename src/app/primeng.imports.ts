@@ -13,6 +13,7 @@ import {RadioButtonModule} from 'primeng/radiobutton';
 import {BlockUIModule} from 'primeng/blockui';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
+import {InputSwitchModule} from 'primeng/inputswitch';
 
 export const PrimeModules = [
     MenubarModule,
@@ -29,5 +30,6 @@ export const PrimeModules = [
     RadioButtonModule,
     BlockUIModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    InputSwitchModule,
 ];

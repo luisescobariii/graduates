@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { DataService, MomentIds } from 'src/app/services/data.service';
 
 enum SortType { Alphabetical, Ascending, Descending }
+enum SeparateType { None, Faculty, Program, Gender }
 
 @Component({
     selector: 'app-visualization',
@@ -26,9 +27,12 @@ export class VisualizationComponent implements OnInit {
     treemapConfigs = [9, 10, 19, 20];
     geoConfigs = [8, 18, 28];
 
+    separateColumns = ['', 'IdFacultad', 'IdPrograma', 'IdSexo'];
+
     cur = 1;
     curConfig = new BehaviorSubject<any>(null);
     curSortType = SortType.Alphabetical;
+    curSeparateType = SeparateType.None;
 
     configs: any = {
         1: { moment: MomentIds.M0, type: 'pie', column: 'TrabajaActualmente' },
@@ -127,7 +131,7 @@ export class VisualizationComponent implements OnInit {
 
         if (!this.ready || !config) { return; }
         this.ready = false;
-        if (true /*this.pieConfigs.includes(this.cur)*/) {
+        if (this.curSeparateType === SeparateType.None /*this.pieConfigs.includes(this.cur)*/) {
             const counts = {};
             for (const record of this.filteredData) {
                 if (counts[record[config.column]]) {
@@ -161,8 +165,60 @@ export class VisualizationComponent implements OnInit {
                 data = data.sort((a, b) => b.value - a.value);
             }
             config.data = data;
-            config.totalRecords = this.filteredData.length;
+        } else {
+            const counts = {};
+            const countTotals = {};
+            let sepMaster: any;
+            switch (this.curSeparateType) {
+                case SeparateType.Faculty: sepMaster = this.data.faculties.filter(f => this.data.selectedFaculties.includes(f.id)); break;
+                case SeparateType.Program: sepMaster = this.data.programs.filter(p => this.data.selectedPrograms.includes(p.id)); break;
+                case SeparateType.Gender: sepMaster = this.data.genders; break;
+            }
+            const sepNames = {};
+            for (const col of sepMaster) { sepNames[col.id] = col.name; }
+            for (const record of this.filteredData) {
+                let value = sepNames[record[this.separateColumns[this.curSeparateType]]];
+                if (value === '') { value = 'N/A'; }
+                const series = counts[record[config.column]];
+                if (series) {
+                    if (series[value]) {
+                        series[value]++;
+                    } else {
+                        series[value] = 1;
+                    }
+                    countTotals[record[config.column]]++;
+                } else {
+                    const obj = {};
+                    for (const key of Object.keys(sepNames).sort(this.alphabeticalSort)) { obj[sepNames[key]] = 0; }
+                    obj[value] = 1;
+                    counts[record[config.column]] = obj;
+                    countTotals[record[config.column]] = 1;
+                }
+            }
+
+            let sortedKeys: any = [];
+            if (this.curSortType === SortType.Alphabetical) {
+                sortedKeys = Object.keys(counts).sort(this.alphabeticalSort);
+            } else if (this.curSortType === SortType.Ascending) {
+                sortedKeys = Object.keys(countTotals).sort((a, b) => {
+                    if (countTotals[a] < countTotals[b]) { return -1; }
+                    if (countTotals[a] > countTotals[b]) { return 1; }
+                    return 0;
+                });
+            } else if (this.curSortType === SortType.Descending) {
+                sortedKeys = Object.keys(countTotals).sort((a, b) => {
+                    if (countTotals[a] < countTotals[b]) { return 1; }
+                    if (countTotals[a] > countTotals[b]) { return -1; }
+                    return 0;
+                });
+            }
+
+            const data = {};
+            for (const key of sortedKeys) { data[key] = counts[key]; }
+
+            config.data = data;
         }
+        config.totalRecords = this.filteredData.length;
         this.curConfig.next(config);
         this.ready = true;
     }
@@ -170,6 +226,17 @@ export class VisualizationComponent implements OnInit {
     changeSortType(id: SortType): void {
         this.curSortType = id;
         this.updateConfig();
+    }
+
+    changeSeparateType(id: SeparateType): void {
+        this.curSeparateType = id;
+        this.updateConfig();
+    }
+
+    alphabeticalSort(a, b): number {
+        if (a < b) { return -1; }
+        if (a > b) { return 1; }
+        return 0;
     }
 
 }

@@ -15,12 +15,12 @@ table.dataview-table {
     td {
         border: solid thin lightgray;
         padding: 0.4rem 0.8rem;
-        text-align: left;
+        text-align: right;
 
     }
 
-    th:last-child,
-    td:last-child {
-        text-align: right;
+    th:first-child,
+    td:first-child {
+        text-align: left;
     }
 }

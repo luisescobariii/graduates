@@ -1,4 +1,4 @@
-<p-card>
+<p-card *ngIf="!separateError">
     <div echarts [options]="options"></div>
     <div class="p-grid">
         <div class="p-col">
@@ -8,19 +8,31 @@
                 <button pButton type="button" (click)="updateChart('bar')" icon="pi pi-chart-bar" class="flipped-icon" title="Bar"></button>
             </span>
         </div>
-        <div class="p-col p-col-fixed">
+    </div>
+    <p-footer>
+        <div class="p-d-flex">
             <div class="p-field p-grid p-m-0">
-                <label for="inSort" class="p-col">Orden:</label>
+                <label for="inSort">Orden:</label>
                 <div class="p-col">
                     <p-dropdown inputId="inSort" [options]="sortOptions" [(ngModel)]="selectedSortOption" (onChange)="sort()"></p-dropdown>
                 </div>
             </div>
-            <!-- <div class="p-field p-grid p-m-0">
-                <label for="inSeparate" class="p-col">Separar:</label>
+            <div *ngIf="localConfig.type !== 'pie'" class="p-field p-grid p-m-0">
+                <label for="inSeparate">
+                    Separar:
+                    <i class="pi pi-info-circle" style="font-size:0.8em; color:blue" title="Debe seleccionar 5 opciones o menos en el filtro correspondiente para habilitar su selección."></i>
+                </label>
                 <div class="p-col">
-                    <p-dropdown inputId="inSeparate" [options]="separateOptions" [(ngModel)]="selectedSortOption" (onChange)="separate()"></p-dropdown>
+                    <p-dropdown inputId="inSeparate" [options]="separateOptions" [(ngModel)]="selectedSeparateOption" (onChange)="separate()"></p-dropdown>
                 </div>
-            </div> -->
+            </div>
+            <div *ngIf="localConfig.type !== 'pie' && selectedSeparateOption !== 0" class="p-field p-grid p-m-0">
+                <label for="inStack">Apilar:</label>
+                <div class="p-col">
+                    <p-inputSwitch inputId="inStack" [(ngModel)]="stack" (onChange)="updateChart()"></p-inputSwitch>
+                </div>
+            </div>
         </div>
-    </div>
+    </p-footer>
 </p-card>
+<p-message *ngIf="separateError" severity="warn" text="No es posible separar más de 5 simultaneamente"></p-message>

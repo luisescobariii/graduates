@@ -57,7 +57,10 @@ export class DataService {
 
     private _selectedPrograms: number[] = [];
     get selectedPrograms(): number[] { return this._selectedPrograms; }
-    set selectedPrograms(ids) { this._selectedPrograms = ids; this.filterSurvey(); }
+    set selectedPrograms(ids) {
+        this._selectedPrograms = ids;
+        this.filterSurvey();
+    }
 
     private _selectedGenders: number[] = [];
     get selectedGenders(): number[] { return this._selectedGenders; }

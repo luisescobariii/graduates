@@ -144,18 +144,4 @@ export class ColombiaMapComponent implements OnInit {
         this.loading = false;
     }
 
-    loadChartInstance(instance): void {
-        instance.on('geoRoam', e => this.onGeoRoam(e, this));
-    }
-
-    onGeoRoam(e, context): void {
-        if (context.zoom && e.zoom) {
-            context.zoom *= e.zoom;
-            context.center = [e.originX, e.originY];
-        } else {
-            context.center[0] += e.dx;
-            context.center[1] += e.dy;
-        }
-    }
-
 }
