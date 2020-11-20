@@ -76,8 +76,6 @@ export class PieChartComponent implements OnInit {
 
 
     updateChart(type: string = ''): void {
-        console.log(this.separateError);
-        console.log(this.localConfig);
         if (type !== '') {
             this.localConfig.type = type;
             if (type === 'pie' && this.selectedSeparateOption !== 0) {

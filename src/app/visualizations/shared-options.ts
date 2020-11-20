@@ -50,7 +50,6 @@ export const shared: any = {
                 readOnly: true,
                 lang: ['Datos', 'Cerrar', 'Refrescar'],
                 optionToContent: opt => {
-                    console.log(opt);
                     let values = opt.series[0].data;
                     let categories;
                     if (typeof(values[0]) === 'object') {
