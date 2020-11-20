@@ -23,6 +23,7 @@ import { environment } from '../environments/environment';
 import { TreemapComponent } from './visualizations/treemap/treemap.component';
 import { ColombiaMapComponent } from './visualizations/colombia-map/colombia-map.component';
 import { RadioFilterComponent } from './filters/radio-filter/radio-filter.component';
+import { UploadComponent } from './layout/upload/upload.component';
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { RadioFilterComponent } from './filters/radio-filter/radio-filter.compon
         TreemapComponent,
         ColombiaMapComponent,
         RadioFilterComponent,
+        UploadComponent,
     ],
     imports: [
         BrowserModule,

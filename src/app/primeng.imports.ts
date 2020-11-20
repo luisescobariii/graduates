@@ -14,6 +14,10 @@ import {BlockUIModule} from 'primeng/blockui';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {InputSwitchModule} from 'primeng/inputswitch';
+import {PanelModule} from 'primeng/panel';
+import {FileUploadModule} from 'primeng/fileupload';
+import {InputTextModule} from 'primeng/inputtext';
+import {ToastModule} from 'primeng/toast';
 
 export const PrimeModules = [
     MenubarModule,
@@ -32,4 +36,8 @@ export const PrimeModules = [
     MessagesModule,
     MessageModule,
     InputSwitchModule,
+    PanelModule,
+    FileUploadModule,
+    InputTextModule,
+    ToastModule,
 ];

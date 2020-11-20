@@ -1,0 +1,27 @@
+<div *ngIf="!locked" class="p-p-2">
+    <p-blockUI [blocked]="loading">
+        <p-progressSpinner></p-progressSpinner>
+    </p-blockUI>
+    <p-panel>
+        <p-header>
+            Carga de datos
+        </p-header>
+        <p>Ingrese el año y el momento que desea cargar, luego seleccione el archivo con la información y oprima el botón para cargar los datos.</p>
+        <br>
+        <div class="p-fluid p-formgrid p-grid">
+            <div class="p-field p-col">
+                <label for="inYear">Año</label>
+                <input id="inYear" [placeholder]="yearPlaceholder" [(ngModel)]="selectedYear" type="number" pInputText> 
+            </div>
+            <div class="p-field p-col">
+                <label for="lastname1">Momento</label>
+                <p-dropdown [options]="momentOptions" [(ngModel)]="selectedMoment"></p-dropdown>
+            </div>
+            <div class="p-field p-col">
+                <label for="lastname1">Archivo</label>
+                <p-fileUpload #fileUpload mode="basic" [disabled]="!selectedYear" [customUpload]="true" chooseLabel="Buscar" uploadLabel="Cargar" accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (uploadHandler)="onUpload($event)"></p-fileUpload>
+            </div>
+        </div>
+    </p-panel>
+    <p-toast></p-toast>
+</div>
