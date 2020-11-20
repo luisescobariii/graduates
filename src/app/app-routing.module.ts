@@ -4,6 +4,7 @@ import { UploadComponent } from './layout/upload/upload.component';
 import { VisualizationComponent } from './layout/visualization/visualization.component';
 
 const routes: Routes = [
+    { path: '', redirectTo: 'visualization/1', pathMatch: 'full' },
     { path: 'visualization/:id', component: VisualizationComponent },
     { path: 'admin', component: UploadComponent },
 ];
