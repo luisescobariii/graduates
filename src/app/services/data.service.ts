@@ -19,6 +19,7 @@ export class DataService {
     filteredSurvey = new BehaviorSubject<any[]>([]);
 
     moments: Tag[] = [];
+    years = new BehaviorSubject<number[]>([]);
     visualizations: TagChild[] = [];
     faculties: Tag[] = [];
     programs: TagChild[] = [];
@@ -27,6 +28,13 @@ export class DataService {
 
     filteredVisualizations = new BehaviorSubject<TagChild[]>([]);
     filteredPrograms = new BehaviorSubject<TagChild[]>([]);
+
+    private _selectedYear = -1;
+    get selectedYear(): number { return this._selectedYear; }
+    set selectedYear(id) {
+        this._selectedYear = id;
+        this.filterSurvey();
+    }
 
     private _selectedMoment = -1;
     get selectedMoment(): number { return this._selectedMoment; }
@@ -115,6 +123,11 @@ export class DataService {
             default: throw new Error('Invalid Moment Id: ' + id);
         }
         this.api.general[method].subscribe(res => {
+            const years = [...new Set<number>(res.map(r => r.SemestreEncuesta))];
+            if (this.selectedYear === -1 || !years.includes(this.selectedYear)) {
+                this._selectedYear = Math.max(...years);
+            }
+            this.years.next(years);
             this.survey = res;
             this.filterSurvey();
             this.loading.next(false);
@@ -124,6 +137,7 @@ export class DataService {
     filterSurvey(): void {
         if (true /*this.selectedMoment === MomentIds.M0 || this.selectedMoment === MomentIds.M1*/) {
             this.filteredSurvey.next(this.survey.filter((record: any) => {
+                if (this.selectedYear !== record.SemestreEncuesta) { return false; }
                 if (!this.selectedFaculties.includes(record.IdFacultad)) { return false; }
                 if (!this.selectedPrograms.includes(record.IdPrograma)) { return false; }
                 if (!this.selectedGenders.includes(record.IdSexo)) { return false; }

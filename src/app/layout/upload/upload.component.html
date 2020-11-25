@@ -11,7 +11,7 @@
         <div class="p-fluid p-formgrid p-grid">
             <div class="p-field p-col">
                 <label for="inYear">Año</label>
-                <input id="inYear" [placeholder]="yearPlaceholder" [(ngModel)]="selectedYear" type="number" pInputText> 
+                <input id="inYear" [placeholder]="yearPlaceholder" [(ngModel)]="selectedYear" type="number" pInputText>
             </div>
             <div class="p-field p-col">
                 <label for="lastname1">Momento</label>
@@ -22,6 +22,8 @@
                 <p-fileUpload #fileUpload mode="basic" [disabled]="!selectedYear" [customUpload]="true" chooseLabel="Buscar" uploadLabel="Cargar" accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (uploadHandler)="onUpload($event)"></p-fileUpload>
             </div>
         </div>
+        <br>
+        <p><a href="../../../assets/docs/Plantilla_carga_encuesta.xlsx">Descargar plantilla de archivo de carga.</a></p>
     </p-panel>
     <p-toast></p-toast>
 </div>

@@ -4,7 +4,7 @@
         <p-accordionTab header="Visualización" [selected]="true">
             <div class="p-d-flex p-jc-between">
                 <app-button-filter [items]="data.moments" [selected]="data.selectedMoment" (selectedItem)="data.changeMoment($event)"></app-button-filter>
-                <p-dropdown [options]="[{ label: 2019, value: 0 }]"></p-dropdown>
+                <app-dropdown-filter [items]="yearOptions" [selected]="data.selectedYear" (selectedItem)="this.data.selectedYear=$event"></app-dropdown-filter>
             </div>
             <br>
             <app-dropdown-filter [items]="data.filteredVisualizations | async" [selected]="data.selectedVisualization" (selectedItem)="data.loadVisualization($event)"></app-dropdown-filter>

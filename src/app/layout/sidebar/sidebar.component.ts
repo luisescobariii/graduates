@@ -9,6 +9,7 @@ import { DataService } from 'src/app/services/data.service';
 export class SidebarComponent implements OnInit {
 
     ready = false;
+    yearOptions: any;
 
     constructor(public data: DataService) { }
 
@@ -18,6 +19,10 @@ export class SidebarComponent implements OnInit {
                 this.ready = true;
                 this.data.ready.unsubscribe();
             }
+        });
+
+        this.data.years.subscribe(res => {
+            this.yearOptions = res.map(y => ({ id: y, name: y }));
         });
     }
 
